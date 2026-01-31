@@ -372,27 +372,6 @@ function hg.NPCDamage(ent,dmgInfo,npcdmg)
 end
 
 GLOBALLIST = {
-	["76561198797549224"] = true, -- spac3
-	["76561198170506041"] = true, -- maleyvich
-	--["76561198298055186"] = true, -- krytoi skilet
-	["76561198964791142"] = true, -- ilyasikdum
-	["76561198233785972"] = true, -- haveaniceday
-	["76561199358860229"] = true, -- checha
-	["76561198390659133"] = true, -- 0oa
-	["76561199059860042"] = true, -- ded
-	["76561199482545788"] = true, -- niko heizenberg
-	["76561198963528067"] = true, -- vigy vigy vigy
-	["76561198345387667"] = true, -- f0cus
-	["76561199023694865"] = true, -- f0cus alt
-	["76561199830240723"] = true, -- checha alt
-	["76561199182790603"] = true, -- jmeelson
-	["76561199126041062"] = true, -- medic
-	["76561198318883131"] = true, -- sidead
-	["76561199058335083"] = true, -- kirik alt
-	["76561199240244612"] = true, -- kirik
-	["76561199358733991"] = true, -- telepuzik
-	["76561199161395664"] = true, -- bombom
-	["76561198893264087"] = true, -- codeorange
 }
 
 hook.Add("PostEntityFireBullets","donthittwice",function(ent,data)
