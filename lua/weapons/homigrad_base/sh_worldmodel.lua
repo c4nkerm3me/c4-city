@@ -95,7 +95,7 @@ function SWEP:ChangeGunPos(dtime)
 	local fakeRagdoll = IsValid(ply.FakeRagdoll)
 
 	local inuse = self:InUse()
-
+	
 	local should = true and not (fakeRagdoll and not (inuse))
 
 	self.lerped_positioning = Lerp(hg.lerpFrameTime2(0.1, dtime), self.lerped_positioning or 0, should and (ent != owner and 0.8 or 1) or 0.3)
@@ -217,7 +217,7 @@ function SWEP:PosAngChanges(ply, desiredPos, desiredAng, bNoAdditional, closeani
 		local _, ot = WorldToLocal(vector_origin, ang, vector_origin, att_Ang)
 		ot:Normalize()
 	
-		local use = hg.KeyDown(ply, IN_USE) or ply:InVehicle()
+		local use = hg.KeyDown(ply, IN_USE) or ply:InVehicle() or (ply:GetNetVar("lastFake",0) > CurTime()) or IsValid(ply.OldRagdoll)
 		local fourtyfive = 45 * (use and 1 or 0)
 		ot[2] = math.Clamp(ot[2], -fourtyfive, fourtyfive)
 		ot[1] = math.Clamp(ot[1], -fourtyfive, fourtyfive)
@@ -625,7 +625,7 @@ function SWEP:WorldModel_Transform(bNoApply, bNoAdditional, model)
 		local matrixRAngRot = matrixR:GetAngles()
 		matrixRAngRot:RotateAroundAxis(matrixRAngRot:Forward(),180)
 		local lerp = self:KeyDown(IN_ATTACK2) and 1 or 1
-		local _,ang = WorldToLocal(vecZero,matrixRAngRot,vecZero,aimvec)
+		local _, ang = WorldToLocal(vecZero,matrixRAngRot,vecZero,aimvec)
 		ang = ang * lerp
 		local _,ang = LocalToWorld(vecZero,ang,vecZero,aimvec)
 		ang[3] = matrixRAngRot[3]

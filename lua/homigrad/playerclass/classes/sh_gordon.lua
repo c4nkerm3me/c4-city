@@ -527,9 +527,9 @@ hook.Add("CanListenOthers", "GordonWeDontHearYou", function(talker)
     end
 end)
 
-hook.Add("HG_PlayerSay", "GordonWeDontSeeYouChat", function(ply, text)
+hook.Add("HG_PlayerSay", "GordonWeDontSeeYouChat", function(ply, txtTbl, text)
     if ply:Alive() and ply.PlayerClassName == "Gordon" then
-        text[1] = ""
+        txtTbl[1] = ""
     end
 end)
 

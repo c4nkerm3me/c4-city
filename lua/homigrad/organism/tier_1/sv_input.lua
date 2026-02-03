@@ -1544,8 +1544,8 @@ hook.Add("OnAmputateLimb", "amputate_cuffs", function(org, ent, limb)
 end)
 
 hook.Add("OnAmputateLimb", "amputate_flashlight", function(org, ent, limb)
-	local inv = ent:GetNetVar("Inventory")
-	if limb == "larm" and inv["Weapons"]["hg_flashlight"] and ent:GetNetVar("flashlight", false) then
+	local inv = ent:GetNetVar("Inventory", {})
+	if limb == "larm" and inv["Weapons"] and inv["Weapons"]["hg_flashlight"] and ent:GetNetVar("flashlight", false) then
 		local flashlight = ents.Create("hg_flashlight")
 		flashlight:SetPos(ent:EyePos())
 		flashlight:SetAngles(ent:EyeAngles())
@@ -1557,7 +1557,7 @@ hook.Add("OnAmputateLimb", "amputate_flashlight", function(org, ent, limb)
 		end
 		ent:SetNetVar("flashlight",false)
 		inv["Weapons"]["hg_flashlight"] = nil
-		ent:SetNetVar("Inventory",inv)
+		ent:SetNetVar("Inventory", inv)
 	end
 end)
 

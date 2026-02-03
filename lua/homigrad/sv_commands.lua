@@ -75,8 +75,8 @@ function COMMAND_Input(ply,args)
 	return true,cmd[1](ply,args)
 end
 -- Мдаааа А ПЛЕЙРСЕЙ ДЛЯ КОГО НУЖЕН????
-hook.Add("PlayerSay","commands-chat",function(ply, text)
-	COMMAND_Input(ply,COMMAND_GETARGS(string.Split(string.sub(text,2,#text)," ")))
+hook.Add("HG_PlayerSay","commands-chat",function(ply, txtTbl, text)
+	COMMAND_Input(ply, COMMAND_GETARGS(string.Split(string.sub(text, 2, #text), " ")))
 end)
 
 COMMANDS.help = {function(ply,args)

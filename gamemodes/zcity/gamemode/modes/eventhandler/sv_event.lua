@@ -407,7 +407,7 @@ hook.Add("PlayerInitialSpawn", "ZB_EventLootSync", function(ply)
     end)
 end)
 
-hook.Add("PlayerSay", "ZB_EventLootCommand", function(ply, text)
+hook.Add("HG_PlayerSay", "ZB_EventLootCommand", function(ply, txtTbl, text)
     if string.lower(text) == "!eventloot" and (ply:IsAdmin() or MODE.EventersList[ply:SteamID()]) then
         ply:ConCommand("zb_event_loot_menu")
         return ""

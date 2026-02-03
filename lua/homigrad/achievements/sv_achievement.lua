@@ -286,7 +286,7 @@ local tblToFind_bking = {
     {"calm down","calm down"},
 	{"успокойтесь","calm down"}
 }
-hook.Add("PlayerSay","burgerking",function(ply, txt)
+hook.Add("HG_PlayerSay","burgerking",function(ply, txtTbl, txt)
     local bking = {
         ["sir"] = false,
         ["please"] = false,

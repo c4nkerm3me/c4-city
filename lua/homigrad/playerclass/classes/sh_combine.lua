@@ -745,7 +745,7 @@ if SERVER then
         end
     end)
 
-    hook.Add("HG_PlayerSay","CombineChatMessage",function(ply,text)
+    hook.Add("HG_PlayerSay","CombineChatMessage",function(ply, txtTbl, text)
         if ply.PlayerClassName == "Combine" and ply:Alive() and not ply.organism.otrub then
             ply:EmitSound("npc/metropolice/vo/on1.wav")
         end
