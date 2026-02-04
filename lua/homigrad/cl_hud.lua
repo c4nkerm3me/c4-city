@@ -480,6 +480,9 @@ hook.Add("radialOptions", "7", function()
         local tbl = {function(mouseClick)
 			if mouseClick == 1 then
 				RunConsoleCommand("act", randomGestures[math.random(#randomGestures)])
+				if (ply.NextFoley or 0) < CurTime() then
+					ply:EmitSound("player/clothes_generic_foley_0" .. math.random(5) .. ".wav", 55)
+				end
 			else
 				local commands = {}
 				for i, str in ipairs(randomGestures) do
@@ -489,6 +492,10 @@ hook.Add("radialOptions", "7", function()
 								str[2]()
 							else
 								RunConsoleCommand("act", str)
+								if (ply.NextFoley or 0) < CurTime() then
+									ply:EmitSound("player/clothes_generic_foley_0" .. math.random(5) .. ".wav", 55)
+									ply.NextFoley = CurTime() + 1
+								end
 							end
 						end,
 						[2] = string.NiceName(istable(str) and str[1] or str)

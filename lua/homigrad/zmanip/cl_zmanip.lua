@@ -154,6 +154,7 @@ function hg.RunZManipAnim(ply, anim, revers, timeOveride, addtbl)
 	ply.zmanipother = tbl.otherData
 	ply.zmanipdrawFunc = tbl.drawFunc
 	ply.zmanipaddtbl = addtbl
+	ply:EmitSound("player/clothes_generic_foley_0" .. math.random(5) .. ".wav", 55)
 	
 	zmdl:SetSequence(tbl.seq)
 end
