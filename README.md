@@ -15,7 +15,5 @@ A.Bcc -> 1.000
 - B -> New mechanics, gameplay changes
 - c -> Fixes and other small things
 
-=======
-
 # By c4nk, C4-City
 This fork was made to contribute to the popular GMod addon 'Z-City', try it out!
