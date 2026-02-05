@@ -74,9 +74,9 @@ if CLIENT then
         [4] = "Low ready",
         [5] = "Point shooting",
         [6] = "Shooting from cover",
-        [7] = "Gangsta",
-        [8] = "One-handed",
-		[9] = "Somalian",
+		[7] = "Somalian",
+        [8] = "Gangsta",
+        [9] = "One-handed",
     }
 
 	concommand.Add("hg_change_posture", function(ply, cmd, args)

@@ -588,7 +588,7 @@ else
 
 	hook.Add("Player Think", "TinnitusPadaet", function(ply, ent)
 		if (ply.TinnitusFactor or 0) > 0 then
-			ply.TinnitusFactor = math.min(math.max((ply.TinnitusFactor or 0) - 0.5, 0),102)
+			ply.TinnitusFactor = math.min(math.max((ply.TinnitusFactor or 0) - FrameTime(), 0),102)
 		end
 	end)
 end
@@ -1439,7 +1439,7 @@ hg.postureFunctions2 = {
 			self.AdditionalPosPreLerp[3] = self.AdditionalPosPreLerp[3] + 6 - add
 		end
 	end,
-	[9] = function(self,ply)
+	[7] = function(self,ply)
 		if self:IsZoom() and not force then return end
 		local add = (hg.GunPositions[ply] and hg.GunPositions[ply][3]) or 0
 		self.AdditionalPosPreLerp[3] = self.AdditionalPosPreLerp[3] + 3
@@ -1762,7 +1762,7 @@ function SWEP:GetAdditionalValues()
 	local speed_add = math.Clamp(1 / skillissue,0.5,1.5)
 	
 	if not suiciding and !self.norecoil then
-		local mulhuy = (self:IsPistolHoldType() or self.PistolKinda) and 2 or (((ply.posture == 1 and not self:IsZoom()) or ply.posture == 7 or ply.posture == 8) and 2 or 0.75)
+		local mulhuy = (self:IsPistolHoldType() or self.PistolKinda) and 2 or (((ply.posture == 1 and not self:IsZoom()) or ply.posture == 8 or ply.posture == 9) and 2 or 0.75)
 		local animpos = self:GetAnimShoot2(0.09 * mulhuy / host_timescale(), true) * 0.5
 		animpos = animpos * 0.3 * mulhuy * (self:IsPistolHoldType() and 1 or 1)
 		animpos = animpos * math.min((self.Primary.Force2 or self.Primary.Force) / 40,3) * ((self.NumBullet or 1) * 3 or 1) * (self.animposmul or 1) // * 4
