@@ -587,12 +587,12 @@ if SERVER then
 else
 	net.Receive("resettinnitus", function(len, ply)
 		local ply = net.ReadPlayer() or ply
-		ply.TinnitusFactor = 0
+		ply.TinnitusFactor = -5
 	end)
 
 	hook.Add("Player Think", "TinnitusPadaet", function(ply, ent)
-		if (ply.TinnitusFactor or 0) > 0 then
-			ply.TinnitusFactor = math.min(math.max((ply.TinnitusFactor or 0) - FrameTime(), 0),102)
+		if (ply.TinnitusFactor or -5) > -5 then
+			ply.TinnitusFactor = math.Clamp((ply.TinnitusFactor or -5) - (FrameTime() * 0.35), -5, 50)
 		end
 	end)
 end
@@ -638,13 +638,14 @@ function SWEP:EmitShoot()
 
 	local MODE = engine.ActiveGamemode() == "zcity" and CurrentRound() or {name = "standard"}
 
-    if not ear_protection and IsValid(ply) and ply:IsPlayer() and GetConVar("hg_guntinnitus"):GetBool() and table.HasValue(tinnitusModes, MODE.name) then
-		ply.TinnitusFactor = (ply.TinnitusFactor or 0) + (self.Primary.Force / 100) * (1 + (insideVal / 32)) * (self.Supressor and 0.5 or 1)
+    if CLIENT then
+		lply.TinnitusFactor = (lply.TinnitusFactor or -5) + (self.Primary.Force / 100) * (1 + (insideVal / 32)) * (self.Supressor and 0.5 or 1)
+		if IsValid(ply) and lply == ply and not ear_protection and GetConVar("hg_guntinnitus"):GetBool() and lply.TinnitusFactor >= 0 and table.HasValue(tinnitusModes, MODE.name) then
+			local time = math.Clamp(lply.TinnitusFactor, 0, 3)
+	        lply.tinnitus = CurTime() + time * 4
 
-	    local time = math.Clamp(ply.TinnitusFactor, 0, 3)
-	    ply.tinnitus = CurTime() + time * 4
-
-	    ply:SetDSP((self.shootingTime and self.shootingTime + 1 < CurTime()) and 31 or 32)
+	        lply:SetDSP((self.shootingTime and self.shootingTime + 1 < CurTime()) and 131 or 32)
+		end
 	end
 
 	if not self.Supressor and !self.NoWINCHESTERFIRE then

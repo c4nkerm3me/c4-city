@@ -301,13 +301,13 @@ tinnitusModes = {
 
 			local MODE = engine.ActiveGamemode() == "zcity" and CurrentRound() or {name = "standard"}
 
-			if (not lply.armors or lply.armors["ears"] ~= "headphones1") and GetConVar("hg_guntinnitus"):GetBool() and table.HasValue(tinnitusModes, MODE.name) then
-				lply.TinnitusFactor = (lply.TinnitusFactor or 0) + (self.Primary.Force / 100) + math.Remap(shooterdist / 300, 0, 1, 1, 0) * (self.Supressor and 0.5 or 1)
+			lply.TinnitusFactor = (lply.TinnitusFactor or -5) + (self.Primary.Force / 200) + math.Clamp(math.Remap(shooterdist / 300, 0, 1, 1, 0), 0, 1) * (self.Supressor and 0.5 or 1)
 
+			if (not lply.armors or lply.armors["ears"] ~= "headphones1") and shooterdist < 600 and GetConVar("hg_guntinnitus"):GetBool() and lply.TinnitusFactor >= 0 and table.HasValue(tinnitusModes, MODE.name) then
 		        local time = math.Clamp(lply.TinnitusFactor, 0, 3)
                 lply.tinnitus = CurTime() + time * 4
 
-			    lply:SetDSP(31)
+			    if shooterdist < 400 then lply:SetDSP(shooterdist > 200 and 31 or 131) end
 		    end
 
 			if shooterdist < 200 and not IsLookingAt(self:GetOwner(),eyePos) then return end
