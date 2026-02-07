@@ -79,19 +79,6 @@ hg.postures = {
 if CLIENT then
 	local printed
 
-    hg.postures = {
-        [0] = "Regular hold",
-        [1] = "Hipfire",
-        [2] = "Left shoulder",
-        [3] = "High ready",
-        [4] = "Low ready",
-        [5] = "Point shooting",
-        [6] = "Shooting from cover",
-		[7] = "Somalian",
-        [8] = "Gangsta",
-        [9] = "One-handed",
-    }
-
 	concommand.Add("hg_change_posture", function(ply, cmd, args)
 		if not args[1] and not isnumber(args[1]) and not printed then print([[Change your gun posture:
 0 - regular hold
