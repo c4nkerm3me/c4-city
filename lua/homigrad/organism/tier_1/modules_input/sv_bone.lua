@@ -100,9 +100,6 @@ local function legs(org, bone, dmg, dmgInfo, key, boneindex, dir, hit, ricochet)
 		org.immobilization = org.immobilization + dmg * 25
 		org.fearadd = org.fearadd + 0.5
 
-	    org.owner[key.."boneRot"] = Angle(math.Rand(0, 45) * (math.Rand(0, 1) == 0 and -1 or 1), 0, math.Rand(25, 65) * (math.Rand(0, 1) == 0 and -1 or 1))
-		org.owner:SetNWAngle(key.."boneRot", org.owner[key.."boneRot"])
-
 		--if org.isPly and !org[key.."amputated"] then org.owner:Notify(broke_leg[math.random(#broke_leg)], 1, "broke"..key, 1, nil, nil) end
 
 		timer.Simple(0, function() hg.LightStunPlayer(org.owner,2) end)
@@ -116,9 +113,6 @@ local function legs(org, bone, dmg, dmgInfo, key, boneindex, dir, hit, ricochet)
 		org.owner:AddNaturalAdrenaline(0.5)
 		org.immobilization = org.immobilization + dmg * 10
 		org.fearadd = org.fearadd + 0.5
-
-		org.owner[key.."boneRot"] = Angle(math.Rand(0, 45) * (math.Rand(0, 1) == 0 and -1 or 1), 0, math.Rand(25, 65) * (math.Rand(0, 1) == 0 and -1 or 1))
-		org.owner:SetNWAngle(key.."boneRot", org.owner[key.."boneRot"])
 
 		--if org.isPly and !org[key.."amputated"] then org.owner:Notify(dislocated_leg[math.random(#dislocated_leg)], 1, "dislocated"..key, 1, nil, nil) end
 
@@ -161,9 +155,6 @@ local function arms(org, bone, dmg, dmgInfo, key, boneindex, dir, hit, ricochet)
 		org.painadd = org.painadd + 55
 		org.owner:AddNaturalAdrenaline(1)
 		org.fearadd = org.fearadd + 0.5
-		
-		org.owner[key.."boneRot"] = Angle(math.Rand(0, 35) * (math.Rand(0, 1) == 0 and -1 or 1), 0, math.Rand(65, 90) * (math.Rand(0, 1) == 0 and -1 or 1))
-		org.owner:SetNWAngle(key.."boneRot", org.owner[key.."boneRot"])
 
 		--if org.isPly and !org[key.."amputated"] then org.owner:Notify(broke_arm[math.random(#broke_arm)], 1, "broke"..key, 1, nil, nil) end
 
@@ -177,9 +168,6 @@ local function arms(org, bone, dmg, dmgInfo, key, boneindex, dir, hit, ricochet)
 		org.painadd = org.painadd + 35
 		org.owner:AddNaturalAdrenaline(0.5)
 		org.fearadd = org.fearadd + 0.5
-
-		org.owner[key.."boneRot"] = Angle(math.Rand(0, 35) * (math.Rand(0, 1) == 0 and -1 or 1), 0, math.Rand(65, 90) * (math.Rand(0, 1) == 0 and -1 or 1))
-		org.owner:SetNWAngle(key.."boneRot", org.owner[key.."boneRot"])
 
 		--if org.isPly and !org[key.."amputated"] then org.owner:Notify(dislocated_arm[math.random(#dislocated_arm)], 1, "dislocated"..key, 1, nil, nil) end
 

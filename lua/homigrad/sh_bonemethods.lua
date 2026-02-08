@@ -10,12 +10,6 @@ local tbl = {
 	["r_forearm"] = "ValveBiped.Bip01_R_Forearm",
 	["l_upperarm"] = "ValveBiped.Bip01_L_UpperArm",
 	["l_forearm"] = "ValveBiped.Bip01_L_Forearm",
-	["r_hand"] = "ValveBiped.Bip01_R_Hand",
-	["l_hand"] = "ValveBiped.Bip01_L_Hand",
-	["r_calf"] = "ValveBiped.Bip01_R_Calf",
-	["l_calf"] = "ValveBiped.Bip01_L_Calf",
-	["r_foot"] = "ValveBiped.Bip01_R_Foot",
-	["l_foot"] = "ValveBiped.Bip01_L_Foot",
 }
 
 hg.bone.client_only = {
