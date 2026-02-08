@@ -114,6 +114,7 @@ function CLASS.On(self)
 	end
 end
 
+--// Reset organism and npc relations
 function CLASS.Off(self)
     if CLIENT then return end
 
@@ -147,28 +148,46 @@ end
 function CLASS.Guilt(self, victim)
     if CLIENT then return end
 
+	--[[if victim:GetPlayerClass() == self:GetPlayerClass() then
+        return 1 --// Idk if zombies really need this so uncomment if you want
+    end]]
+
 	return 0
 end
 
--- organism stuff
+--// We'll do some tricky stuff there..
 function CLASS.Think(self)
     if CLIENT then return end
 
+	--\\ Remove headcrab because we already have one
+	-- We are doing it only when player isn't in ragdoll because we can't properly change playerclass model while he is in ragdoll..
 	if IsValid(self) and not IsValid(self.FakeRagdoll) then
 		self:SetNetVar("headcrab", false)
 	end
 
+	--\\ Remove armor
 	local armors = self:GetNetVar("Armor",{})
 	if armors["head"] and !hg.armor["head"][armors["head"]].nodrop then
 		hg.DropArmorForce(self, armors["head"])
 	end
-	
+
 	if armors["face"] and !hg.armor["face"][armors["face"]].nodrop then
 		hg.DropArmorForce(self, armors["face"])
 	end
 
-	local org = self.organism
+	--\\ Only hands will be active..
+	local wep = self:GetActiveWeapon()
+	if IsValid(wep) and wep:GetClass() ~= "weapon_hands_sh" then
+		if self:HasWeapon("weapon_hands_sh") then
+			self:SelectWeapon("weapon_hands_sh")
+		else
+			self:Give("weapon_hands_sh")
+			self:SelectWeapon("weapon_hands_sh")
+		end
+	end
 
+	--\\ Organism stuff
+	local org = self.organism
 	if org.bleed ~= 0 then
 		org.bleed = 0
 	end
@@ -228,6 +247,7 @@ function CLASS.Think(self)
 	end
 end
 
+--// Phrase stuff
 local zomb_pain = {"npc/zombie/zombie_die2.wav"}
 for i = 1, 6 do
 	table.insert(zomb_pain, "npc/zombie/zombie_pain" .. i .. ".wav")
@@ -263,6 +283,7 @@ hook.Add("HG_CanThoughts", "ZombCantDumat", function(ply)
 	end
 end)
 
+--// Can't pickup weapons and use doors
 hook.Add("PlayerCanPickupWeapon", "ZombCantPickup", function(ply, ent)
 	if IsValid(ply) and ply.PlayerClassName == "headcrabzombie" then
 		return false
@@ -275,6 +296,7 @@ hook.Add("PlayerUse", "ZombCantPickup", function(ply, ent)
 	end
 end)
 
+--// Player speed & animation speed stuff
 hook.Add("HG_MovementCalc_2", "ZombSpeed", function(mul, ply, cmd, mv)
 	if IsValid(ply) and ply.PlayerClassName == "headcrabzombie" then
         mul[1] = 0.8
@@ -329,19 +351,22 @@ if SERVER then
 		end
 	end)]]
 
+	--// Zombies can't loot anyone
 	hook.Add("ZB_CanLootInventory", "ZombCanLoot", function(ply, ent, canloot)
 		if ply.PlayerClassName == "headcrabzombie" then
 			return ply, ent, false
 		end
 	end)
 
+	--// Zombies can't speak
 	hook.Add("HG_PlayerCanHearPlayersVoice", "ZombVoice", function(listener, speaker)
 		if speaker.PlayerClassName == "headcrabzombie" then
 			return false, false
 		end
 	end)
 else
-	local function DrawHeadcrab(ply, strModel, vecAdjust, fFov, setMat)
+	--// Draw 3d headcrab overlay
+	local function DrawHeadcrab(ply, strModel, vecAdjust, fFov)
 		if not IsValid(ply.FirstPersonCrab) then
 			ply.FirstPersonCrab = ClientsideModel(strModel)
 			ply.FirstPersonCrab:SetNoDraw(true)
@@ -364,18 +389,6 @@ else
 	
 		if mdl2:GetModel() != strModel then
 			mdl2:SetModel(strModel)
-		end
-		
-		if setMat and !mdl.matseted1 then
-			mdl:SetSubMaterial(0,setMat)
-			mdl.matseted = false
-			mdl.matseted1 = true
-			--print('huy')
-		elseif !setMat and !mdl.matseted then
-			--print("huy")
-			mdl:SetSubMaterial(0,nil)
-			mdl.matseted = true
-			mdl.matseted1 = false
 		end
 	
 		if ply == GetViewEntity() then
@@ -430,14 +443,15 @@ else
 		end
 	end
 
-	hook.Add("Post Pre Post Processing", "ZombProcessing", function()
-		if lply.PlayerClassName == "headcrabzombie" then
+	hook.Add("Post Pre Post Processing", "ZombDrawHeadcrab", function()
+		if lply.PlayerClassName == "headcrabzombie" and lply:Alive() then
 			cam.IgnoreZ(true)
 				DrawHeadcrab(lply, "models/nova/w_headcrab.mdl", vector_origin, -50)
 			cam.IgnoreZ(false)
 		end
 	end)
 
+	--// Change view from head to upper torso because zombie model doesn't have proper head bone..
 	-- "HG_CalcView", ply, origin, angles, fova, znear, zfar
 	hook.Add("HGAddView", "ZombView", function(ply, origin, angles)
 		if ply:Alive() and ply.PlayerClassName == "headcrabzombie" then
@@ -455,7 +469,8 @@ else
 			elseif chr:GetBodygroup(1) == 0 and not ply.organism.headamputated then
 				chr:SetBodygroup(1, 1)
 			end
-			return ply, origin, angles
+
+			return ply, origin, angles -- change da fov maybe??
 		end
 	end)
 
@@ -472,6 +487,7 @@ hook.Add("PlayerCanLegAttack", "ZombKick", function(ply)
 	end
 end)
 
+--// Zombie animations
 hook.Add("CalcMainActivity", "ZombAnims", function(ply, vel)
 	if ply.PlayerClassName == "headcrabzombie" then
 		local anim = ACT_HL2MP_RUN_ZOMBIE
@@ -493,6 +509,7 @@ hook.Add("CalcMainActivity", "ZombAnims", function(ply, vel)
 	end
 end)
 
+--// Zombie can't drive vehicles
 hook.Add("CanPlayerEnterVehicle", "ZombVehicle", function(ply, ent)
 	if ply.PlayerClassName == "headcrabzombie" then
 		return false
