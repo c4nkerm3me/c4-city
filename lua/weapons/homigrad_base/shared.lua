@@ -650,8 +650,8 @@ function SWEP:EmitShoot()
 	local MODE = engine.ActiveGamemode() == "zcity" and CurrentRound() or {name = "standard"}
 
     if CLIENT then
-		lply.TinnitusFactor = (lply.TinnitusFactor or -5) + (self.Primary.Force / 100) * (1 + (insideVal / 32)) * (self.Supressor and 0.5 or 1)
-		if IsValid(ply) and lply == ply and not ear_protection and GetGlobalBool("hg_shoot_tinnitus") and lply.TinnitusFactor >= 0 and table.HasValue(tinnitusModes, MODE.name) then
+		lply.TinnitusFactor = (lply.TinnitusFactor or -5) + (self.Primary.Force / 100) * (self.NumBullet or 1) * (1 + (insideVal / 32)) * (self.Supressor and 0.5 or 1)
+		if IsValid(ply) and lply == ply and not hadEarProtection and GetGlobalBool("hg_shoot_tinnitus") and lply.TinnitusFactor >= 0 and table.HasValue(tinnitusModes, MODE.name) then
 			local time = math.Clamp(lply.TinnitusFactor, 0, 3)
 	        lply.tinnitus = CurTime() + time * 4
 
