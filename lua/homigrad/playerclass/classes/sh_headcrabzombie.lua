@@ -48,7 +48,25 @@ CLASS.CanUseDefaultPhrase = false
 CLASS.CanEmitRNDSound = false
 CLASS.CanUseGestures = false
 
-local fallbackMat = "models/zombie_classic/zombie_classic_sheet"
+local fallbackMats = {
+	["Rebel"] = {
+		["main"] = "models/zombie_classic/zombie_classic_sheet",
+		["pants"] = "models/zombie_classic/zombie_classic_sheet",
+		["boots"] = "models/zombie_classic/zombie_classic_sheet",
+	},
+	["Metrocop"] = {
+		["main"] = "models/balaclava_hood/berd_diff_018_a_uni",
+		["pants"] = "models/humans/male/group02/lambda",
+		["boots"] = "models/humans/male/group01/formal"
+	},
+	["Combine"] = {
+		["main"] = "models/zombie_classic/combinesoldiersheet_zombie",
+		["pants"] = "models/gruchk_uwrist/css_seb_swat/swat/gear2",
+		["boots"] = "models/humans/male/group01/formal"
+	},
+}
+
+local clr_darkred = Color(75, 0, 0)
 function CLASS.On(self)
 	--\\ Remember old player cloth to set it later
 	local clothTbl = {}
@@ -81,15 +99,16 @@ function CLASS.On(self)
 		self:SetSubMaterial(0, fallbackMat)
 
 		if SERVER then
-			if not table.IsEmpty(clothTbl) and self.PreZombClass ~= "Rebel" then
+			if not table.IsEmpty(clothTbl) and not fallbackMats[self.PreZombClass] then
 				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/players_sheet"), hg.Appearance.Clothes[1][clothTbl["main"]])
 				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/pants"), hg.Appearance.Clothes[1][clothTbl["pants"]])
 				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/cross"), hg.Appearance.Clothes[1][clothTbl["boots"]])
 			else
-				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/players_sheet"), fallbackMat)
-				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/pants"), fallbackMat)
-				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/cross"), fallbackMat)
+				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/players_sheet"), fallbackMats[self.PreZombClass]["main"])
+				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/pants"), fallbackMats[self.PreZombClass]["pants"])
+				self:SetSubMaterial(self:GetSubMaterialIdByName("distac/gloves/cross"), fallbackMats[self.PreZombClass]["boots"])
 			end
+			self:SetPlayerColor(clr_darkred:ToVector())
 		end
 
 		self:SetSubMaterial(4, "")
@@ -106,9 +125,7 @@ function CLASS.On(self)
 			self.organism.painadd = -10
 		end
 
-		if IsValid(self) and not IsValid(self.FakeRagdoll) then
-			self:SetNetVar("headcrab", false)
-		end
+		self:SetNetVar("headcrab", false)
 
 		for k, v in ipairs(ents.FindByClass("npc_*")) do
 			if table.HasValue(rebels, v:GetClass()) or table.HasValue(combines, v:GetClass()) then
@@ -200,12 +217,6 @@ end
 --// We'll do some tricky stuff there..
 function CLASS.Think(self)
     if CLIENT then return end
-
-	--\\ Remove headcrab because we already have one
-	-- We are doing it only when player isn't in ragdoll because we can't properly change playerclass model while he is in ragdoll..
-	if IsValid(self) and not IsValid(self.FakeRagdoll) then
-		self:SetNetVar("headcrab", false)
-	end
 
 	--\\ Remove armor
 	local armors = self:GetNetVar("Armor",{})
