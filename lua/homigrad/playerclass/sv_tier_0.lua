@@ -60,7 +60,7 @@ COMMANDS.playerclass = {
 
 		if #args < 2 then
 			ply:SetPlayerClass(class)
-			ply:ChatPrint(ply2:Name())
+			ply:ChatPrint(ply:Name())
 		else
 			for i, ply2 in pairs(player.GetListByName(plya)) do
 				ply2:SetPlayerClass(class)
