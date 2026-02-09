@@ -632,7 +632,7 @@ hook.Add("Think", "Fake", function()
 						local useent = (IsValid(ent) and ent.Use and ent) or false 
 						if useent and not useent:IsVehicle() then
 							local Hook = hook.Run("PlayerUse", ply, useent)
-							if Hook then return Hook end
+							if Hook == false then return Hook end
 
 							useent:Use(ply)
 						end
@@ -713,7 +713,7 @@ hook.Add("Think", "Fake", function()
 						local useent = (IsValid(ent) and ent.Use and ent) or false 
 						if useent and not useent:IsVehicle() then
 							local Hook = hook.Run("PlayerUse", ply, useent)
-							if Hook then return Hook end
+							if Hook == false then return Hook end
 
 							useent:Use(ply)
 						end
