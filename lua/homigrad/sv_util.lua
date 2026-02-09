@@ -465,6 +465,7 @@ hook.Add("PostEntityFireBullets","bulletsuppression",function(ent,bullet)
 	local tr = bullet.Trace
 	local dmg = bullet.Damage
 	if ent == Entity(0) then return end
+	if !IsValid(ent) then return end
 	for i,ply in player.Iterator() do--five pebbles
 		if (IsValid(ent:GetOwner()) and ply == ent:GetOwner()) or ent == ply then continue end
 		if !ply:Alive() then continue end
@@ -1490,9 +1491,9 @@ hook.Add( "KeyPress", "snowballs_pickup", function( ply, key )
 end )
 
 local warmingEnts = {
-	["env_sprite"] = 1,
-	["env_fire"] = 2,
-	["vfire"] = 15,
+	["env_sprite"] = 0.1,
+	["env_fire"] = 0.5,
+	["vfire"] = function(ent) return ent:GetFireState() end,
 }
 
 hg.MapTemps = {
@@ -1533,14 +1534,14 @@ hook.Add("Org Think", "BodyTemperature", function(owner, org, timeValue) -- пе
 		start = ent:GetPos() + vector_up * 15,
 		endpos = ent:GetPos() + vector_up * 999999,
 		mask = MASK_SOLID_BRUSHONLY
-	} ).HitSky
+	} ).HitSky and !owner:InVehicle()
 
 	org.temperature = org.temperature or 36.7
 
 	local currentPulse = org.pulse or 70
 	local pulseHeat = 0
 	local temp = hg.MapTemps[game.GetMap()] or 20
-	
+
 	if currentPulse > 80 then
 		local pulseMultiplier = math.min((currentPulse - 70) / 100, 1.2)
 		pulseHeat = timeValue / 50 * pulseMultiplier * 0.2
@@ -1548,10 +1549,11 @@ hook.Add("Org Think", "BodyTemperature", function(owner, org, timeValue) -- пе
 
 	local warming = org.stamina.sub > 0 and 0.5 or 0
 	local ownerpos = owner:GetPos()
-	for i, ent in ipairs(ents.FindInSphere(ownerpos, 200)) do
-		if warmingEnts[ent:GetClass()] then
+	for i, ent in ipairs(ents.FindInSphere(ownerpos, 300)) do
+		local warmingent = warmingEnts[ent:GetClass()]
+		if warmingent then
 			--org.temperature = org.temperature + timeValue * (warmingEnts[ent:GetClass()] / 50 * (1 - ent:GetPos():Distance(owner:GetPos()) / 200))
-			warming = warming + 0.5
+			warming = warming + (isfunction(warmingent) and warmingent(ent) or warmingent)
 		end
 	end
 
@@ -1574,7 +1576,7 @@ hook.Add("Org Think", "BodyTemperature", function(owner, org, timeValue) -- пе
 	end
 
 	if temp > 25 then
-		changeRate = changeRate * 1
+		changeRate = changeRate * math.Clamp(((org.heatbuff - 30) / 60), 1, 2)
 	end
 
 	org.tempchanging = changeRate
@@ -1582,7 +1584,11 @@ hook.Add("Org Think", "BodyTemperature", function(owner, org, timeValue) -- пе
 	if org.heatbuff > 0 then
 		temp = math.max(20, temp)
 	end
-	
+
+	if org.heatbuff < 30 and org.temperature < 30 then -- bro is NOT warming up
+		temp = math.min(-20, temp)
+	end
+
 	org.temperature = math.Approach(org.temperature, hg.TranslateToBodyTemp(temp, org), org.tempchanging)
 
 	-- При холоде
