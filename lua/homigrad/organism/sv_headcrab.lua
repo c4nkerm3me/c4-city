@@ -56,7 +56,7 @@ hook.Add("Org Think", "Headcrab",function(owner, org, timeValue)
 				owner:EmitSound("npc/zombie/zombie_alert" .. math.random(3) .. ".wav", 80, math.random(60, 70))
 				owner:EmitSound("neck_snap_01.wav", 80, 80, 1, CHAN_AUTO)
 				owner:SetPlayerClass("headcrabzombie")
-				org.painadd = org.painadd + 40
+				org.painadd = org.painadd + 5
 				hg.StunPlayer(owner, 5)
 				if zb and zb.GiveRole then
 					zb.GiveRole(owner, "Zombie", clr_red)
@@ -74,7 +74,7 @@ hook.Add("Org Think", "Headcrab",function(owner, org, timeValue)
         if org.alive and org.headcrabon and (org.headcrabon + 20) < CurTime() then
 			if (org.headcrabon + 21) > CurTime() then
 				owner:EmitSound("npc/zombie/zombie_pain"..math.random(6)..".wav", 80, math.random(80, 90))
-				org.painadd = org.painadd + 40
+				org.painadd = org.painadd + 10
 				hg.StunPlayer(owner, 5)
 				org.needotrub = true
 			end

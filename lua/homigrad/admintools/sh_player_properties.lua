@@ -34,7 +34,7 @@ properties.Add( "notify", {
         ent = hg.RagdollOwner( ent ) or ent
 
 		ent:Notify( text, 0 )
-		print(tostring(ply:Nick() or ply) .." has notfied ".. tostring(ent:Nick() or ent) .." with the following message; ")
+		print(tostring(ply:Nick() or ply) .." has notfied ".. tostring(ent:Nick() or ent) .." with the following message; "..text)
 	end 
 } )
 
@@ -645,7 +645,7 @@ local function Respawn(ply,body)
 
             timer.Simple(0.1,function()
                 if body.CurAppearance then
-                    local color = body:GetNWVector("PlayerColor",Vector(0,0,0) )
+                    local color = body:GetNWVector("PlayerColor", vector_origin)
                     body.CurAppearance.AColor = Color( color[1] * 255,color[2] * 255,color[3] * 255 )
                     ply:SetPlayerColor(color)
                     hg.Appearance.ForceApplyAppearance( ply, body.CurAppearance )
@@ -657,7 +657,7 @@ local function Respawn(ply,body)
                     ply:SetNetVar("Accessories", "")
                     ply:SetModel(body:GetModel())
                     ply:SetSubMaterial()
-                    ply:SetPlayerColor(ply:GetNWVector("PlayerColor",Vector(0,0,0) ))
+                    ply:SetPlayerColor(ply:GetNWVector("PlayerColor", vector_origin))
                 end
                 ply:Give( "weapon_hands_sh" )
             end)
