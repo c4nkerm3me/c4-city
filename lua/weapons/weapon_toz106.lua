@@ -8,7 +8,7 @@ SWEP.Category = "Weapons - Shotguns"
 SWEP.Slot = 2
 SWEP.SlotPos = 10
 SWEP.ViewModel = ""
-SWEP.WorldModel = "models/weapons/tfa_ins2/w_svd.mdl"
+SWEP.WorldModel = "models/weapons/w_shot_m3super90.mdl"
 SWEP.WorldModelFake = "models/weapons/arc9/darsu_eft/c_toz106.mdl"
 SWEP.FakeAttachment = "1"
 SWEP.FakeBodyGroups = "110011111"
@@ -75,25 +75,14 @@ if CLIENT then
 	SWEP.FakeReloadEvents = {
 		[0.35] = function( self, timeMul )
 			if self:Clip1() < 1 then
-				self:GetOwner():PullLHTowards("ValveBiped.Bip01_Spine2", 1.1 * timeMul)//, self.MagModel, {self.lmagpos3, self.lmagang3, isnumber(self.FakeMagDropBone) and self.FakeMagDropBone or self:GetWM():LookupBone(self.FakeMagDropBone or "Magazine") or self:GetWM():LookupBone("ValveBiped.Bip01_L_Hand"), self.lmagpos2, self.lmagang2}, function(self)
-				//	if IsValid(self) then
-				//		self:GetWM():ManipulateBoneScale(75, vector_full)
-				//		self:GetWM():ManipulateBoneScale(76, vector_full)
-				//		self:GetWM():ManipulateBoneScale(77, vector_full)
-				//	end
-				//end)
-			else
-				//self:GetOwner():PullLHTowards("ValveBiped.Bip01_Spine2", 1.5 * timeMul, self.MagModel, {Vector(-2,-3,0), Angle(180,-0,90), 75, self.lmagpos, self.lmagang}, true)
+				self:GetOwner():PullLHTowards("ValveBiped.Bip01_Spine2", 1.1 * timeMul)
 			end
 		end,
 		[0.36] = function( self, timeMul )
 			if self:Clip1() < 1 then
 				hg.CreateMag( self, Vector(0,0,-50), "111111")
 				self:GetWM():ManipulateBoneScale(67, vecPochtiZero)
-			else
-				//self:GetWM():ManipulateBoneScale(75, vecPochtiZero)
-				//self:GetWM():ManipulateBoneScale(76, vecPochtiZero)
-				//self:GetWM():ManipulateBoneScale(77, vecPochtiZero)
+
 			end 
 		end,
 		[0.6] = function( self, timeMul )
@@ -119,7 +108,7 @@ SWEP.IconOverride = "entities/arc9_eft_toz106.png"
 SWEP.weight = 2
 SWEP.weaponInvCategory = 1
 SWEP.CustomShell = "20/70"
---SWEP.EjectPos = Vector(0,5,5)
+
 SWEP.EjectAng = Angle(-45,0,0)
 SWEP.AutomaticDraw = false
 SWEP.UseCustomWorldModel = false
@@ -220,8 +209,7 @@ SWEP.ViewPunchDiv = 90
 SWEP.DistSound = "weapons/tfa_ins2/sks/sks_dist.wav"
 
 SWEP.lengthSub = 15
---SWEP.Supressor = false
---SWEP.SetSupressor = true
+
 
 --local to head
 SWEP.RHPos = Vector(3,-6.5,4)
@@ -340,11 +328,6 @@ function SWEP:CanPrimaryAttack()
 end
 
 function SWEP:DrawPost()
-	-- local wep = self:GetWeaponEntity()
-	-- if CLIENT and IsValid(wep) then
-	-- 	self.shooanim = LerpFT(0.4,self.shooanim or 0,(self:Clip1() < 1 and not self.reload) and 2.3 or self.ReloadSlideOffset)
-	-- 	--wep:ManipulateBonePosition(70,Vector(-1.8*self.shooanim , 0,0 ),false)
-	-- end
 end
 
 function SWEP:ModelCreated(model)

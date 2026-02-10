@@ -9,7 +9,7 @@ SWEP.Category = "Weapons - Sniper Rifles"
 SWEP.Slot = 2
 SWEP.SlotPos = 10
 SWEP.ViewModel = ""
-SWEP.WorldModel = "models/weapons/tfa_ins2/w_k98.mdl"
+SWEP.WorldModel = "models/weapons/w_snip_awp.mdl"
 SWEP.WorldModelFake = "models/weapons/tfa_ins2/c_k98.mdl"
 SWEP.FakeScale = 0.9
 
