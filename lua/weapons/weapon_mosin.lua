@@ -21,7 +21,7 @@ SWEP.AttachmentAng = Angle(90,0,0)
 SWEP.FakeBodyGroups = "000000000"
 SWEP.BarrelLength = 40
 SWEP.SUPBarrelLenght = 47
-SWEP.OpenBolt = false
+SWEP.OpenBolt = true
 SWEP.CantFireFromCollision = false // 2 спусковых крючка все дела
 
 SWEP.FakeViewBobBone = "ValveBiped.Bip01_L_Hand"
@@ -96,11 +96,11 @@ SWEP.holsteredAng = Angle(210, 0, 180)
 SWEP.AnimList = {
 	["idle"] = "base_idle",
 	["reload"] = "base_Fire_end",
-	["reload_empty"] = "base_Fire_end",
 	["finish_empty"] = "Base_Reload_End",
 	["finish"] = "Base_Reload_End",
 	["insert"] = "Base_Reload_Insert",
 	["start"] = "Base_Reload_Start",
+	["start_empty"] = "base_reload_start_empty",
 	["cycle"] = "base_Fire_end",
 }
 
@@ -145,12 +145,24 @@ SWEP.AnimsEvents = {
 			HideMag2(self:GetWM(), true)
 		end,
 	},
+	["base_reload_start_empty"] = {
+		[0.3] = function(self)
+			SetModelAmmo(self:GetWM(), self)
+			self:EmitSound("weapons/tfa_ins2/k98/m40a1_boltback.wav", 45, math_random(95, 105))
+			HideMag2(self:GetWM(), true)
+		end,
+	},
 	["Base_Reload_Insert"] = {
 		[0.1] = function(self)
-			SetModelAmmo(self:GetWM(), self)
 			self:EmitSound("weapons/tfa_ins2/k98/mosin_bulletin_"..math_random(1,4)..".wav", 45, math_random(95, 105))
 			HideMag2(self:GetWM(), true)
 		end,
+		[0.4] = function(self)
+			if CLIENT then
+				self:SetClip1(self:Clip1() + 1)
+			end
+			SetModelAmmo(self:GetWM(), self)
+		end
 	},
 	["Base_Reload_End"] = {
 		[0.2] = function(self)
@@ -164,15 +176,15 @@ SWEP.AnimsEvents = {
 		end,
 	},
 	["base_Fire_end"] = {
-		[0.1] = function(self)
+		[0.2] = function(self)
 			SetModelAmmo(self:GetWM(), self)
 			self:EmitSound("weapons/tfa_ins2/k98/m40a1_boltback.wav", 45, math_random(95, 105))
 		end,
-		[0.3] = function(self)
-			--self:RejectShell(self.ShellEject)
+		[0.35] = function(self)
+			self:RejectShell(self.ShellEject)
 			self:EmitSound("weapons/tfa_ins2/k98/m40a1_boltforward.wav", 45, math_random(95, 105))
 		end,
-		[0.5] = function(self)
+		[0.55] = function(self)
 			SetModelAmmo(self:GetWM(), self)
 			self:EmitSound("weapons/tfa_ins2/k98/m40a1_boltlatch.wav", 45, math_random(95, 105))
 		end
@@ -199,7 +211,7 @@ end
 
 local function cock(self,time)
 	if SERVER then
-		self:Draw(true)
+		self:Draw(true, true)
 	end
 
 	if self:Clip1() == 0 then
@@ -283,7 +295,11 @@ function SWEP:Reload(time)
 
 	if SERVER then
 		self:SetNetVar("shootgunReload",CurTime() + 1.1)
-		self:PlayAnim(self.AnimList["start"] or "bolt_open_0",1,false,function() 
+		self:PlayAnim((self.drawBullet == nil and self.AnimList["start_empty"] or self.AnimList["start"]) or "bolt_open_0",1,false,function()
+			if self.drawBullet then
+				self:SetClip1(self:Clip1() - 1)
+				ply:GiveAmmo(1, self:GetPrimaryAmmoType(), true)
+			end
 			reloadFunc(self)
 		end,
 		false,true)
