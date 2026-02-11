@@ -182,6 +182,7 @@ end
 function SWEP:PrimaryShootPost()
 	if CLIENT then return end
 	if self:IsResting() then return end
+
 	local owner = self:GetOwner()
 	local char = hg.GetCurrentCharacter(owner)
 	if not char:IsRagdoll() then
