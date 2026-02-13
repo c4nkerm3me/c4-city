@@ -8,7 +8,7 @@ SWEP.Category = "Weapons - Machineguns"
 SWEP.Slot = 2
 SWEP.SlotPos = 10
 SWEP.ViewModel = ""
-SWEP.WorldModel = "models/weapons/w_mach_m249para.mdl"
+SWEP.WorldModel = "models/pwb/weapons/w_hk23e.mdl"
 
 SWEP.WepSelectIcon2 = Material("pwb/sprites/hk23e.png")
 SWEP.IconOverride = "entities/weapon_pwb_hk23e.png"
@@ -85,6 +85,8 @@ SWEP.bipodsub = 20
 SWEP.holsteredBone = "ValveBiped.Bip01_Spine2"
 SWEP.holsteredPos = Vector(-5, 8, -14)
 SWEP.holsteredAng = Angle(220, 0, 180)
+
+SWEP.RestPosition = Vector(20, -1, 2)
 
 --local to head
 SWEP.RHPos = Vector(6,-7,5)

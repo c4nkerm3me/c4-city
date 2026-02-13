@@ -325,9 +325,9 @@ function SWEP:IsLocal2()
 	return CLIENT and self:GetOwner() == LocalPlayer() and LocalPlayer() == GetViewEntity()
 end
 
-local hg_quietshots = GetConVar("hg_quietshots") or CreateClientConVar("hg_quietshots", "0", true, false, "quieter gun sounds", 0, 1)
-local hg_gunshotvolume = GetConVar("hg_gunshotvolume") or CreateClientConVar("hg_gunshotvolume", "1", true, false, "volume of gun sounds", 0, 1)
-local hg_oldsights = CreateConVar("hg_oldsights", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "No camera wobble when aiming")
+local hg_quietshots = GetConVar("hg_quietshots") or CreateClientConVar("hg_quietshots", "0", true, false, "Toggle quieter gun sounds", 0, 1)
+local hg_gunshotvolume = GetConVar("hg_gunshotvolume") or CreateClientConVar("hg_gunshotvolume", "1", true, false, "Modify volume of gun sounds", 0, 1)
+local hg_oldsights = CreateConVar("hg_oldsights", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Disable camera wobble when aiming")
 
 if CLIENT then
 	EmitSound = hg.EmitSound
@@ -465,10 +465,14 @@ end
 
 function SWEP:Shoot(override)
 	self:PrimaryShootPre()
-	if self:GetOwner():IsNPC() then self.drawBullet = true end
+
+	local owner = self:GetOwner()
+	if owner:IsNPC() then self.drawBullet = true end
+
 	if !override and !self:CanPrimaryAttack() then return false end
 	if !override and !self:CanUse() then return false end
-	if CLIENT and self:GetOwner() != LocalPlayer() and !override then return false end
+	if CLIENT and owner != LocalPlayer() and !override then return false end
+
 	local primary = self.Primary
 	if override then self.drawBullet = true end
 	
@@ -480,8 +484,8 @@ function SWEP:Shoot(override)
 		return false
 	end
 	
-	if !override and IsValid(self:GetOwner()) and !self:GetOwner():IsNPC() and primary.Next > CurTime() then return false end
-	if !override and IsValid(self:GetOwner()) and !self:GetOwner():IsNPC() and (primary.NextFire or 0) > CurTime() then return false end
+	if !override and IsValid(owner) and !owner:IsNPC() and primary.Next > CurTime() then return false end
+	if !override and IsValid(owner) and !owner:IsNPC() and (primary.NextFire or 0) > CurTime() then return false end
 	
 	primary.Next = CurTime() + primary.Wait * 1.1
 	primary.RealAutomatic = primary.RealAutomatic or weapons_Get(self:GetClass()).Primary.Automatic
@@ -590,7 +594,7 @@ if SERVER then
 		net.Send(ply)
 	end)
 
-	hg_shoot_tinnitus = ConVarExists("hg_shoot_tinnitus") and GetConVar("hg_shoot_tinnitus") or CreateConVar("hg_shoot_tinnitus","0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Enables shooting tinnitus")
+	hg_shoot_tinnitus = ConVarExists("hg_shoot_tinnitus") and GetConVar("hg_shoot_tinnitus") or CreateConVar("hg_shoot_tinnitus","0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Toggle shooting tinnitus")
 	SetGlobalBool("hg_shoot_tinnitus",hg_shoot_tinnitus:GetBool())
 
 	cvars.AddChangeCallback("hg_shoot_tinnitus", function(convar_name, value_old, value_new)
@@ -1497,10 +1501,10 @@ hg.postureFunctions2 = {
 SWEP.AdditionalPosPreLerp = Vector(0,0,0)
 SWEP.AdditionalAngPreLerp = Angle(0,0,0)
 
-SWEP.vecSuicidePist = Vector(-7,-7,4)
-SWEP.angSuicidePist = Angle(40,100,80)
-SWEP.vecSuicidePist2 = Vector(-6,-4,9)
-SWEP.angSuicidePist2 = Angle(60,100,80)
+SWEP.vecSuicidePist = Vector(-6,-4,2)
+SWEP.angSuicidePist = Angle(20,110,-10)
+SWEP.vecSuicidePist2 = Vector(-5,-5,3)
+SWEP.angSuicidePist2 = Angle(32,105,20)
 SWEP.vecSuicideRifle = Vector(2,-19,-1)
 SWEP.angSuicideRifle = Angle(15,100,90)
 SWEP.vecSuicideRifle2 = Vector(12, -20, 0)
@@ -1728,7 +1732,7 @@ function SWEP:GetAdditionalValues()
 	local walk = math.Clamp(self.walkinglerp / 100,0,1)
 	
 	self.huytime = self.huytime + walk * dtime * 8 * (ply:OnGround() and 1 or 0.1)
-	--if 
+
 	--ply.oldposture = ply.posture
 	if self:IsSprinting() then
 		--ply.posture = 1
@@ -1756,8 +1760,9 @@ function SWEP:GetAdditionalValues()
 	self.AdditionalAngPreLerp[1] = self.AdditionalAngPreLerp[1] - y * 2 * lena
 	self.AdditionalAngPreLerp[3] = self.AdditionalAngPreLerp[3] - y * 3 * lena
 
-	if CLIENT and self:IsLocal() and owner:IsOnGround() then
-		local runMul = vellen / owner:GetRunSpeed() * (self.reload and 0.5 or 1)
+	--// Sprint anim
+	if CLIENT and self:IsLocal() and owner:IsOnGround() and not self.reload then
+		local runMul = vellen / owner:GetRunSpeed()
 		if runMul >= 0.32 then
 			if not self:IsPistolHoldType() and not self.CanEpicRun then
 				self.AdditionalPosPreLerp[3] = self.AdditionalPosPreLerp[3] - y * 3 * runMul
@@ -1790,7 +1795,7 @@ function SWEP:GetAdditionalValues()
 	local suiciding = false--ply.suiciding
 	local huypitch = ((ply.suiciding and !IsValid(ply.FakeRagdoll)) or huya or (self:IsSprinting() or ((ply.posture == 4 or ply.posture == 3) and not self:IsZoom())))
 
-	self.pitch = Lerp(hg.lerpFrameTime(0.001,dtime), self.pitch, ply:GetNWFloat("InLegKick",0) > CurTime() and 0.5 or suiciding and 1 or huypitch and 0.65 or 0)
+	self.pitch = Lerp(hg.lerpFrameTime(0.001,dtime), self.pitch, ply:GetNWFloat("InLegKick",0) > CurTime() and 0.5 or suiciding and 1 or huypitch and 0.65 or self.reload and 0.75 or 0)
 	
 	if not huypitch then
 		local torso = ply:LookupBone("ValveBiped.Bip01_Spine1")
